@@ -250,6 +250,12 @@ abstract class SinglePointerDragGestureRecognizer extends OneSequenceGestureReco
 
   void _addPointer(PointerEvent event) {
     _velocityTrackers[event.pointer] = velocityTrackerBuilder(event);
+    
+    if (_velocityTrackers.length > 1) {
+      resolve(GestureDisposition.rejected);
+      return;
+    }
+    
     if (_state == _DragState.ready) {
       _state = _DragState.possible;
       _initialPosition = OffsetPair(global: event.position, local: event.localPosition);
@@ -266,11 +272,6 @@ abstract class SinglePointerDragGestureRecognizer extends OneSequenceGestureReco
   @override
   void addAllowedPointer(PointerDownEvent event) {
     super.addAllowedPointer(event);
-
-    if (_velocityTrackers.length > 1) {
-      resolve(GestureDisposition.rejected);
-      return;
-    }
 
     if (_state == _DragState.ready) {
       _initialButtons = event.buttons;
